@@ -1,9 +1,12 @@
-<div class="toolbar">
-  <button (click)="setDrawMode('LineString')">Draw Line</button>
-  <button (click)="setDrawMode('Polygon')">Draw Polygon</button>
-  <button (click)="stopDrawing()">Stop</button>
+<div class="toolbar" (mousedown)="$event.stopPropagation()" (click)="$event.stopPropagation()">
+  <button type="button" (click)="setDrawMode('LineString')">Draw Line</button>
+  <button type="button" (click)="setDrawMode('Polygon')">Draw Polygon</button>
+  <button type="button" class="btn-finish" (click)="finishDrawing()">Finish</button>
+  <button type="button" class="btn-reset" (click)="reset()">Reset</button>
+  <button type="button" class="btn-clear-db" (click)="clearDatabase()">Clear database</button>
 
-  <span class="info" *ngIf="lastInfo">{{ lastInfo }}</span>
+  <span class="info">{{ lastInfo ?? '—' }}</span>
 </div>
+<p class="hint">Draw on the map (double-click to finish a line; click first point to close a polygon). Only when you click <strong>Finish</strong> are data saved to the database; if you do not press Finish, nothing is saved. <strong>Reset</strong> clears unsaved drawings only. <strong>Clear database</strong> removes all saved measurements.</p>
 
 <div id="map" class="map"></div>

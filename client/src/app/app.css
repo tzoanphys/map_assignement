@@ -6,6 +6,8 @@
 }
 
 .toolbar {
+  position: relative;
+  z-index: 10;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -54,13 +56,41 @@
   background: #0284c7;
 }
 
-.toolbar button:last-of-type {
-  background: #374151;
-  color: #e6e8ec;
+.toolbar .btn-finish {
+  background: #059669;
+  color: white;
 }
 
-.toolbar button:last-of-type:hover {
+.toolbar .btn-finish:hover {
+  background: #047857;
+}
+
+.toolbar .btn-reset {
+  background: #dc2626;
+  color: white;
+}
+
+.toolbar .btn-reset:hover {
+  background: #b91c1c;
+}
+
+.toolbar .btn-clear-db {
+  background: #6b7280;
+  color: white;
+}
+
+.toolbar .btn-clear-db:hover {
   background: #4b5563;
+}
+
+.hint {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 0.85rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  flex-shrink: 0;
 }
 
 .info {
