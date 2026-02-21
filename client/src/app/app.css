@@ -1,8 +1,24 @@
+/* ——— Artistic / cartographer theme ——— */
 :host {
+  --paper: #f6f1e8;
+  --paper-dark: #e8e2d6;
+  --ink: #2c2825;
+  --ink-muted: #5c564d;
+  --accent-line: #b8864a;
+  --accent-sage: #6b7b5c;
+  --accent-terracotta: #c17f59;
+  --accent-indigo: #5c6b7d;
+  --border: rgba(44, 40, 37, 0.12);
+  --shadow-soft: 0 2px 12px rgba(44, 40, 37, 0.06);
+  --shadow-medium: 0 4px 20px rgba(44, 40, 37, 0.08);
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-ui: "Outfit", system-ui, sans-serif;
+
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 100vh;
+  background: var(--paper);
 }
 
 .toolbar {
@@ -10,109 +26,168 @@
   z-index: 10;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: #1a1d23;
-  color: #e6e8ec;
-  font-family: system-ui, -apple-system, sans-serif;
+  gap: 0.5rem 1rem;
+  padding: 0.875rem 1.25rem;
+  background: linear-gradient(180deg, #fffef9 0%, var(--paper-dark) 100%);
+  color: var(--ink);
+  font-family: var(--font-ui);
   font-size: 0.9rem;
+  font-weight: 500;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-soft);
+  border-bottom: 1px solid var(--border);
+}
+
+.toolbar .toolbar-brand {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-right: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.toolbar .toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .toolbar button {
   padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.875rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .toolbar button:hover {
   transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+  border-color: rgba(44, 40, 37, 0.2);
 }
 
 .toolbar button:active {
   transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
-.toolbar button:first-child {
-  background: #3b82f6;
-  color: white;
+.toolbar-actions button:first-child {
+  background: var(--accent-indigo);
+  color: #fff;
+  border-color: transparent;
 }
 
-.toolbar button:first-child:hover {
-  background: #2563eb;
+.toolbar-actions button:first-child:hover {
+  background: #4d5d6f;
+  color: #fff;
+  border-color: transparent;
 }
 
-.toolbar button:nth-child(2) {
-  background: #0ea5e9;
-  color: white;
+.toolbar-actions button:nth-child(2) {
+  background: var(--accent-sage);
+  color: #fff;
+  border-color: transparent;
 }
 
-.toolbar button:nth-child(2):hover {
-  background: #0284c7;
+.toolbar-actions button:nth-child(2):hover {
+  background: #5c6b4e;
+  color: #fff;
+  border-color: transparent;
 }
 
 .toolbar .btn-finish {
-  background: #059669;
-  color: white;
+  background: var(--accent-terracotta);
+  color: #fff;
+  border-color: transparent;
 }
 
 .toolbar .btn-finish:hover {
-  background: #047857;
+  background: #a86d4a;
+  color: #fff;
+  border-color: transparent;
 }
 
 .toolbar .btn-reset {
-  background: #dc2626;
-  color: white;
+  background: #fff;
+  color: #a04545;
+  border-color: rgba(160, 69, 69, 0.4);
 }
 
 .toolbar .btn-reset:hover {
-  background: #b91c1c;
+  background: #fdf2f2;
+  border-color: #a04545;
+  color: #8b3a3a;
 }
 
 .toolbar .btn-clear-db {
-  background: #6b7280;
-  color: white;
+  background: var(--paper-dark);
+  color: var(--ink-muted);
+  border-color: var(--border);
 }
 
 .toolbar .btn-clear-db:hover {
-  background: #4b5563;
+  background: #ddd6c8;
+  color: var(--ink);
+  border-color: rgba(44, 40, 37, 0.2);
 }
 
 .toolbar .btn-download {
-  background: #7c3aed;
-  color: white;
+  background: var(--accent-line);
+  color: #fff;
+  border-color: transparent;
 }
 
 .toolbar .btn-download:hover {
-  background: #6d28d9;
-}
-
-.hint {
-  margin: 0;
-  padding: 0.5rem 1rem;
-  background: #fef3c7;
-  color: #92400e;
-  font-size: 0.85rem;
-  font-family: system-ui, -apple-system, sans-serif;
-  flex-shrink: 0;
+  background: #a3723d;
+  color: #fff;
+  border-color: transparent;
 }
 
 .info {
   margin-left: auto;
-  padding: 0.35rem 0.75rem;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
+  padding: 0.4rem 0.875rem;
+  background: rgba(44, 40, 37, 0.06);
+  border-radius: 8px;
   font-size: 0.8rem;
-  color: #9ca3af;
+  font-weight: 500;
+  color: var(--ink-muted);
+  border: 1px solid var(--border);
+  max-width: 28rem;
+  text-align: right;
+}
+
+.hint {
+  margin: 0;
+  padding: 0.75rem 1.25rem 0.75rem 1.5rem;
+  background: #fffef9;
+  color: var(--ink-muted);
+  font-size: 0.9375rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.5;
+  flex-shrink: 0;
+  border-left: 4px solid var(--accent-line);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset;
+}
+
+.hint strong {
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .map {
   flex: 1;
   min-height: 0;
   width: 100%;
+  box-shadow: var(--shadow-medium) inset;
+  border-top: 1px solid var(--border);
 }
