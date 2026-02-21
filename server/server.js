@@ -64,6 +64,12 @@ app.post("/api/measurements", async (req, res) => {
   res.status(201).json(saved);
 });
 
+// Delete all measurements (clear database)
+app.delete("/api/measurements", async (req, res) => {
+  const result = await Measurement.deleteMany({});
+  res.json({ deletedCount: result.deletedCount });
+});
+
 // If no route matched, respond so curl doesn't hang
 app.use((req, res) => {
   res.status(404).json({ error: "Not found" });

@@ -92,12 +92,17 @@ export class App implements AfterViewInit {
       dragVertexDelay: 700,
     });
     this.map.addInteraction(this.drawInteraction);
-    this.lastInfo = type === 'LineString' ? 'Draw a line. Click Finish to save.' : 'Draw a polygon. Click Finish to save.';
+    this.lastInfo = type === 'LineString' ? '📈 Draw a line. Click Finish to save.' : 'Draw a polygon. Click Finish to save.';
     this.cdr.detectChanges();
   }
 
   stopDrawing(): void {
     if (this.drawInteraction && this.map) {
+      try {
+        this.drawInteraction.abortDrawing();
+      } catch {
+        // no active sketch
+      }
       this.map.removeInteraction(this.drawInteraction);
       this.drawInteraction = null;
     }
@@ -175,6 +180,11 @@ export class App implements AfterViewInit {
   reset(): void {
     this.stopDrawing();
     this.pendingSource.clear();
+    // Force map to repaint so unsaved lines disappear immediately
+    if (this.map) {
+      this.pendingSource.changed();
+      this.map.render();
+    }
     this.lastInfo = 'Unsaved drawings cleared. Your saved data in the database are unchanged.';
     this.cdr.detectChanges();
   }
@@ -192,6 +202,32 @@ export class App implements AfterViewInit {
       error: () => {
         this.ngZone.run(() => {
           this.lastInfo = 'Failed to clear database. Is the server running?';
+          this.cdr.detectChanges();
+        });
+      },
+    });
+  }
+
+  /** Download saved measurements as a JSON file (available after Finish). */
+  downloadData(): void {
+    this.http.get<unknown[]>(API + '/measurements').subscribe({
+      next: (items) => {
+        const json = JSON.stringify(items, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `measurements_${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        this.ngZone.run(() => {
+          this.lastInfo = items.length === 0 ? 'No data to download. Draw and click Finish first.' : `Downloaded ${items.length} measurement(s).`;
+          this.cdr.detectChanges();
+        });
+      },
+      error: () => {
+        this.ngZone.run(() => {
+          this.lastInfo = 'Download failed. Is the server running?';
           this.cdr.detectChanges();
         });
       },

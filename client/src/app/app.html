@@ -4,9 +4,10 @@
   <button type="button" class="btn-finish" (click)="finishDrawing()">Finish</button>
   <button type="button" class="btn-reset" (click)="reset()">Reset</button>
   <button type="button" class="btn-clear-db" (click)="clearDatabase()">Clear database</button>
+  <button type="button" class="btn-download" (click)="downloadData()">Download</button>
 
   <span class="info">{{ lastInfo ?? '—' }}</span>
 </div>
-<p class="hint">Draw on the map (double-click to finish a line; click first point to close a polygon). Only when you click <strong>Finish</strong> are data saved to the database; if you do not press Finish, nothing is saved. <strong>Reset</strong> clears unsaved drawings only. <strong>Clear database</strong> removes all saved measurements.</p>
+<p class="hint">Draw on the map (double-click to finish a line; click first point to close a polygon). Only when you click <strong>Finish</strong> are data saved to the database; if you do not press Finish, nothing is saved. After saving, use <strong>Download</strong> to get your data as JSON. <strong>Reset</strong> clears unsaved drawings only. <strong>Clear database</strong> removes all saved measurements.</p>
 
 <div id="map" class="map"></div>

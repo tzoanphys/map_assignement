@@ -83,6 +83,15 @@
   background: #4b5563;
 }
 
+.toolbar .btn-download {
+  background: #7c3aed;
+  color: white;
+}
+
+.toolbar .btn-download:hover {
+  background: #6d28d9;
+}
+
 .hint {
   margin: 0;
   padding: 0.5rem 1rem;
