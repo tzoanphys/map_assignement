@@ -1,0 +1,79 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100vh;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #1a1d23;
+  color: #e6e8ec;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.toolbar button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.toolbar button:hover {
+  transform: translateY(-1px);
+}
+
+.toolbar button:active {
+  transform: translateY(0);
+}
+
+.toolbar button:first-child {
+  background: #3b82f6;
+  color: white;
+}
+
+.toolbar button:first-child:hover {
+  background: #2563eb;
+}
+
+.toolbar button:nth-child(2) {
+  background: #0ea5e9;
+  color: white;
+}
+
+.toolbar button:nth-child(2):hover {
+  background: #0284c7;
+}
+
+.toolbar button:last-of-type {
+  background: #374151;
+  color: #e6e8ec;
+}
+
+.toolbar button:last-of-type:hover {
+  background: #4b5563;
+}
+
+.info {
+  margin-left: auto;
+  padding: 0.35rem 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.map {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
