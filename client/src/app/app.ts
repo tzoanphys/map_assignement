@@ -17,7 +17,10 @@ import LineString from 'ol/geom/LineString';
 import Polygon from 'ol/geom/Polygon';
 import Feature from 'ol/Feature';
 
-const API = 'http://localhost:3000/api';
+const API =
+  typeof window !== 'undefined' && window.location?.hostname === 'localhost'
+    ? 'http://localhost:3000/api'
+    : 'https://map-assignement.onrender.com/api';
 
 @Component({
   selector: 'app-root',
