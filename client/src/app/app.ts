@@ -36,13 +36,7 @@ export class App implements AfterViewInit {
   pendingSource = new VectorSource();
   drawInteraction: Draw | null = null;
   lastInfo: string = 'Loading…';
-  menuOpen = true;
-  menuView: 'main' | 'instructions' | 'help' = 'main';
-
-  setMenuView(view: 'main' | 'instructions' | 'help'): void {
-    this.menuView = view;
-    this.cdr.detectChanges();
-  }
+  showInstructions = false;
 
   /** Bold style so your drawings are clearly separate from map base/attribution */
   private static readonly drawStyle = new Style({
@@ -54,9 +48,9 @@ export class App implements AfterViewInit {
     this.map = new Map({
       target: 'map',
       layers: [
-        new TileLayer({ source: new OSM() }),
-        new VectorLayer({ source: this.savedSource, style: App.drawStyle }),
-        new VectorLayer({ source: this.pendingSource, style: App.drawStyle }),
+        new TileLayer({ source: new OSM(), zIndex: 0 }),
+        new VectorLayer({ source: this.savedSource, style: App.drawStyle, zIndex: 10 }),
+        new VectorLayer({ source: this.pendingSource, style: App.drawStyle, zIndex: 11 }),
       ],
       view: new View({
         center: fromLonLat([4.3517, 50.8503]),
@@ -102,11 +96,11 @@ export class App implements AfterViewInit {
       source: this.pendingSource,
       type: geometryType,
       // Easier drawing: allow more pointer movement to still count as a click (add vertex)
-      clickTolerance: 20,
+      clickTolerance: 24,
       // Easier to finish: snap to first point from farther away (close polygon / finish line)
-      snapTolerance: 24,
+      snapTolerance: 30,
       // Longer delay before a click becomes "drag vertex" so clicks register as add-point more reliably
-      dragVertexDelay: 700,
+      dragVertexDelay: 800,
     });
     this.map.addInteraction(this.drawInteraction);
     this.lastInfo = type === 'LineString' ? '📈 Draw a line. Click Finish to save.' : 'Draw a polygon. Click Finish to save.';

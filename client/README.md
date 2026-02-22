@@ -2,6 +2,13 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.4.
 
+## How to run the app
+
+1. **MongoDB**: Start MongoDB (e.g. run `mongod` or start the MongoDB service).
+2. **Backend**: In a terminal, go to the server folder (`cd server`), then run `npm run dev`. The API runs at `http://localhost:3000`.
+3. **Frontend**: In another terminal, go to the client folder (`cd client`), then run `ng serve` or `npx ng serve`. The app is at `http://localhost:4200`.
+4. Open `http://localhost:4200` in your browser. Use **Draw Line** or **Draw Polygon** on the map, then **Finish** to save. **Reset** clears the map; **Download** exports your data as JSON.
+
 ## Development server
 
 To start a local development server, run:

@@ -38,25 +38,6 @@
   border-bottom: 1px solid var(--border);
 }
 
-.toolbar .btn-menu {
-  padding: 0.4rem 0.6rem;
-  margin-right: 0.25rem;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--ink-muted);
-}
-
-.toolbar .btn-menu:hover {
-  background: rgba(44, 40, 37, 0.06);
-  color: var(--ink);
-}
-
-.menu-icon {
-  font-size: 1.25rem;
-  line-height: 1;
-  display: inline-block;
-}
-
 .toolbar .toolbar-brand {
   font-family: var(--font-display);
   font-size: 1.25rem;
@@ -170,6 +151,19 @@
   border-color: transparent;
 }
 
+.toolbar .btn-instructions {
+  background: rgba(44, 40, 37, 0.08);
+  color: var(--ink-muted);
+  border-color: var(--border);
+}
+
+.toolbar .btn-instructions:hover,
+.toolbar .btn-instructions.active {
+  background: var(--accent-indigo);
+  color: #fff;
+  border-color: transparent;
+}
+
 .info {
   margin-left: auto;
   padding: 0.4rem 0.875rem;
@@ -181,41 +175,6 @@
   border: 1px solid var(--border);
   max-width: 28rem;
   text-align: right;
-}
-
-.menu-nav {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.5rem 1rem;
-  background: #fffef9;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-  font-family: var(--font-ui);
-}
-
-.menu-nav-item {
-  padding: 0.4rem 0.875rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: #fff;
-  color: var(--ink-muted);
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-}
-
-.menu-nav-item:hover {
-  background: rgba(44, 40, 37, 0.06);
-  color: var(--ink);
-  border-color: rgba(44, 40, 37, 0.2);
-}
-
-.menu-nav-item.active {
-  background: var(--accent-indigo);
-  color: #fff;
-  border-color: transparent;
 }
 
 .main-content {
@@ -316,10 +275,32 @@
   min-height: 0;
   width: 100%;
   box-shadow: var(--shadow-medium) inset;
-/* Keep OpenLayers default attribution above our bar but visually distinct */
-.map + .attribution-bar {
-  z-index: 5;
+  border-top: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
 }
 
-  border-top: 1px solid var(--border);
+.main-content .map + .attribution-bar {
+  z-index: 2;
+}
+
+.instructions-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(44, 40, 37, 0.4);
+  font-family: var(--font-ui);
+}
+
+.instructions-panel {
+  background: var(--paper);
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-medium);
+  max-width: 32rem;
+  border: 1px solid var(--border);
 }
