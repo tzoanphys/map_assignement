@@ -38,6 +38,36 @@ export class App implements AfterViewInit {
   lastInfo: string = 'Loading…';
   showInstructions = false;
 
+  /** Number of measurements currently saved (from API / after Finish). */
+  savedMeasurementsCount = 0;
+  /** Number of measurements when user last downloaded; download only allowed when savedMeasurementsCount > this. */
+  countAtLastDownload = 0;
+
+  /** Download only when there are saved measurements and there is new data since last download. */
+  get canDownload(): boolean {
+    return this.savedMeasurementsCount > 0 && this.savedMeasurementsCount > this.countAtLastDownload;
+  }
+
+  openInstructions(): void {
+    this.showInstructions = true;
+    this.cdr.markForCheck();
+    this.cdr.detectChanges();
+  }
+
+  closeInstructions(): void {
+    this.ngZone.run(() => {
+      this.showInstructions = false;
+      this.cdr.markForCheck();
+      this.cdr.detectChanges();
+    });
+  }
+
+  onKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Escape' && this.showInstructions) {
+      this.closeInstructions();
+    }
+  }
+
   /** Bold style so your drawings are clearly separate from map base/attribution */
   private static readonly drawStyle = new Style({
     stroke: new Stroke({ color: '#1565c0', width: 4 }),
@@ -76,6 +106,7 @@ export class App implements AfterViewInit {
               this.savedSource.addFeature(new Feature({ geometry: poly }));
             }
           });
+          this.savedMeasurementsCount = items.length;
           this.lastInfo = overrideMessage ?? (items.length === 0 ? 'No measurements yet. Draw then click Finish to save.' : `${items.length} measurement(s) in database.`);
           this.cdr.detectChanges();
         });
@@ -96,14 +127,16 @@ export class App implements AfterViewInit {
       source: this.pendingSource,
       type: geometryType,
       // Easier drawing: allow more pointer movement to still count as a click (add vertex)
-      clickTolerance: 24,
+      clickTolerance: 32,
       // Easier to finish: snap to first point from farther away (close polygon / finish line)
-      snapTolerance: 30,
+      snapTolerance: 40,
       // Longer delay before a click becomes "drag vertex" so clicks register as add-point more reliably
-      dragVertexDelay: 800,
+      dragVertexDelay: 1000,
     });
     this.map.addInteraction(this.drawInteraction);
-    this.lastInfo = type === 'LineString' ? '📈 Draw a line. Click Finish to save.' : 'Draw a polygon. Click Finish to save.';
+    this.lastInfo = type === 'LineString'
+      ? 'Draw a line: click to add points, double-click to finish. Then press Finish to save.'
+      : 'Draw a polygon: click to add corners, click first point to close. Then press Finish to save.';
     this.cdr.detectChanges();
   }
 
@@ -172,6 +205,7 @@ export class App implements AfterViewInit {
             if (!failed && done === total) {
               features.forEach((f) => this.savedSource.addFeature(f));
               this.pendingSource.clear();
+              this.savedMeasurementsCount = this.savedSource.getFeatures().length;
               this.lastInfo = '✅Your data are saved and are available.';
               this.cdr.detectChanges();
             }
@@ -197,6 +231,8 @@ export class App implements AfterViewInit {
       this.savedSource.changed();
       this.map.render();
     }
+    this.savedMeasurementsCount = 0;
+    this.countAtLastDownload = 0;
     this.lastInfo = 'Map refreshed. All lines (saved and unsaved) cleared from the map.';
     this.cdr.detectChanges();
   }
@@ -218,8 +254,15 @@ export class App implements AfterViewInit {
     });
   }
 
-  /** Download saved measurements as a JSON file (available after Finish). */
+  /** Download saved measurements as a JSON file. Only allowed when there are new measurements since last download. */
   downloadData(): void {
+    if (!this.canDownload) {
+      this.lastInfo = this.savedMeasurementsCount === 0
+        ? 'Draw and click Finish first to save measurements, then you can download.'
+        : 'No new measurements to download. Draw and click Finish to add more, then download.';
+      this.cdr.detectChanges();
+      return;
+    }
     this.http.get<unknown[]>(API + '/measurements').subscribe({
       next: (items) => {
         const json = JSON.stringify(items, null, 2);
@@ -231,7 +274,8 @@ export class App implements AfterViewInit {
         a.click();
         URL.revokeObjectURL(url);
         this.ngZone.run(() => {
-          this.lastInfo = items.length === 0 ? 'No data to download. Draw and click Finish first.' : `Downloaded ${items.length} measurement(s).`;
+          this.countAtLastDownload = items.length;
+          this.lastInfo = `Downloaded ${items.length} measurement(s). Add new measurements and Finish to download again.`;
           this.cdr.detectChanges();
         });
       },

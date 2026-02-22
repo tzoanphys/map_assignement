@@ -1,32 +1,70 @@
-<div class="toolbar" (mousedown)="$event.stopPropagation()" (click)="$event.stopPropagation()">
+<!-- TOOLBAR -->
+<div class="toolbar" (mousedown)="$event.stopPropagation()">
   <span class="toolbar-brand">Measure</span>
+
   <div class="toolbar-actions">
     <button type="button" (click)="setDrawMode('LineString')">Draw Line</button>
     <button type="button" (click)="setDrawMode('Polygon')">Draw Polygon</button>
     <button type="button" class="btn-finish" (click)="finishDrawing()">Finish</button>
     <button type="button" class="btn-reset" (click)="reset()">Reset</button>
     <button type="button" class="btn-delete-data" (click)="deleteLastMeasurement()">Delete data</button>
-    <button type="button" class="btn-download" (click)="downloadData()">Download</button>
-    <button type="button" class="btn-instructions" (click)="showInstructions = !showInstructions" [class.active]="showInstructions">Instructions</button>
+    <button type="button" class="btn-download" [disabled]="!canDownload" (click)="downloadData()">Download</button>
+    <button type="button"
+            class="btn-instructions"
+            type="button"
+            (click)="openInstructions(); $event.stopPropagation()">
+      Instructions
+    </button>
   </div>
+
   <span class="info">{{ lastInfo ?? '—' }}</span>
 </div>
 
+<!-- INSTRUCTIONS OVERLAY - always in DOM, visibility toggled so it always works -->
+<section class="instructions-window"
+         [class.instructions-window-visible]="showInstructions"
+         role="dialog"
+         [attr.aria-hidden]="!showInstructions"
+         tabindex="0"
+         (keydown)="onKeyDown($event)">
+
+  <!-- Dark background -->
+  <div class="instructions-window-backdrop"
+       (click)="closeInstructions()">
+  </div>
+
+  <!-- White/Beige popup box -->
+  <div class="instructions-window-box">
+
+    <!-- Close button (top-left as you requested) -->
+    <button type="button"
+            class="instructions-window-close"
+            (click)="closeInstructions()">
+      ×
+    </button>
+
+    <h2 class="instructions-window-title">Instructions</h2>
+
+    <ol class="instructions-window-list">
+      <li>Click <strong>Draw Line</strong> or <strong>Draw Polygon</strong>.</li>
+      <li>Click on the map to add points.</li>
+      <li>Double-click to finish.</li>
+      <li>Click <strong>Finish</strong> to save.</li>
+      <li>Click <strong>Download</strong> to export your measurements.</li>
+    </ol>
+
+  </div>
+</section>
+
+<!-- MAP -->
 <main class="main-content">
   <div id="map" class="map"></div>
-  <div class="attribution-bar">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. Drawings are shown in blue on the map.</div>
-
-  <section class="instructions-overlay" *ngIf="showInstructions">
-    <div class="instructions-panel">
-      <h2 class="panel-title">How to run the app</h2>
-      <ol class="panel-list">
-        <li>Start <strong>MongoDB</strong> (e.g. run <code>mongod</code> or start the MongoDB service).</li>
-        <li>Start the <strong>backend</strong>: in a terminal, <code>cd server</code>, then <code>npm run dev</code>. API runs at <code>http://localhost:3000</code>.</li>
-        <li>Start the <strong>frontend</strong>: in another terminal, <code>cd client</code>, then <code>ng serve</code> or <code>npx ng serve</code>. App at <code>http://localhost:4200</code>.</li>
-        <li>Open <code>http://localhost:4200</code> in your browser. Use <strong>Draw Line</strong> or <strong>Draw Polygon</strong>, then <strong>Finish</strong> to save.</li>
-      </ol>
-      <p class="panel-text">Draw on the map (double-click to finish a line; click first point again to close a polygon). Your lines appear in blue over the map.</p>
-      <button type="button" class="btn-back" (click)="showInstructions = false">Close</button>
-    </div>
-  </section>
+  <div class="attribution-bar">
+    © <a href="https://www.openstreetmap.org/copyright"
+         target="_blank"
+         rel="noopener">
+      OpenStreetMap
+    </a>
+    contributors. Drawings are shown in blue.
+  </div>
 </main>

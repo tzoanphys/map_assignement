@@ -151,6 +151,16 @@
   border-color: transparent;
 }
 
+.toolbar .btn-download:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.toolbar .btn-download:disabled:hover {
+  background: var(--accent-line);
+}
+
 .toolbar .btn-instructions {
   background: rgba(44, 40, 37, 0.08);
   color: var(--ink-muted);
@@ -197,9 +207,24 @@
 }
 
 .panel-title {
-  margin: 0 0 1rem;
+  margin: 0 0 0.75rem;
   font-family: var(--font-display);
   font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.panel-intro {
+  margin: 0 0 1rem;
+  color: var(--ink);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.panel-subtitle {
+  margin: 1rem 0 0.5rem;
+  font-family: var(--font-ui);
+  font-size: 1rem;
   font-weight: 600;
   color: var(--ink);
 }
@@ -223,6 +248,10 @@
 
 .panel-list li {
   margin-bottom: 0.5rem;
+}
+
+.instructions-panel ul.panel-list {
+  list-style-type: disc;
 }
 
 .panel-list code {
@@ -284,23 +313,104 @@
   z-index: 2;
 }
 
-.instructions-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 9;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 2rem;
-  background: rgba(44, 40, 37, 0.4);
+/* Inline instructions message (fallback so user always sees instructions) */
+.instructions-inline-message {
+  margin: 0;
+  padding: 0.75rem 1.25rem;
+  background: #efe3b3;
+  border-bottom: 2px solid #c9c0a0;
   font-family: var(--font-ui);
+  font-size: 0.95rem;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
-.instructions-panel {
-  background: var(--paper);
-  padding: 1.5rem 2rem;
-  border-radius: 12px;
-  box-shadow: var(--shadow-medium);
-  max-width: 32rem;
-  border: 1px solid var(--border);
+.instructions-inline-close {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid #c9c0a0;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.instructions-inline-close:hover {
+  background: #e8e2d6;
+}
+
+/* full-screen container – always in DOM; visible only when .instructions-window-visible */
+.instructions-window {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2147483647;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 12vh;
+  box-sizing: border-box;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.instructions-window.instructions-window-visible {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* dark transparent background */
+.instructions-window-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* the popup box */
+.instructions-window-box {
+  position: relative;
+  z-index: 1;
+  width: min(720px, 92vw);
+  max-height: 70vh;
+  overflow: auto;
+  background: #efe3b3;
+  border-radius: 14px;
+  padding: 22px 22px 18px 22px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  border: 2px solid #c9c0a0;
+  pointer-events: auto;
+}
+
+/* close X (top-left as you requested) */
+.instructions-window-close {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid #c9c0a0;
+  background: rgba(255,255,255,0.7);
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 28px;
+}
+
+/* text */
+.instructions-window-title {
+  margin: 0 0 10px 46px; /* leave space because X is on the left */
+}
+
+.instructions-window-list {
+  margin: 0 0 0 24px;
 }
