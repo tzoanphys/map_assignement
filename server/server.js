@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 
 // Mongo connection
 //const MONGO_URL = "mongodb://127.0.0.1:27017/measurements_db";
-const MONGO_URL = process.env.MONGO_URI;
+const MONGO_URL = process.env.MONGO_URL;
 
 mongoose
   .connect(MONGO_URL)
@@ -51,8 +51,13 @@ app.get("/", (req, res) => {
 
 // Get all saved measurements
 app.get("/api/measurements", async (req, res) => {
-  const items = await Measurement.find().sort({ createdAt: -1 });
-  res.json(items);
+  try {
+    const items = await Measurement.find().sort({ createdAt: -1 });
+    res.json(items);
+  } catch (err) {
+    console.error("GET /api/measurements error:", err);
+    res.status(503).json({ error: "Database unavailable", details: err.message });
+  }
 });
 
 // Save new measurement
@@ -82,8 +87,8 @@ app.use((req, res) => {
   res.status(404).json({ error: "Not found" });
 });
 
-const PORT = 3000;
-const HOST = "0.0.0.0"; // so Windows browser can reach server running in WSL
+const PORT = process.env.PORT || 3000;
+const HOST = "0.0.0.0";
 app.listen(PORT, HOST, () => {
   console.log(`✅ API running on http://localhost:${PORT}`);
 });
