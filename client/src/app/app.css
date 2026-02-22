@@ -409,6 +409,16 @@
 /* text */
 .instructions-window-title {
   margin: 0 0 10px 46px; /* leave space because X is on the left */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.instructions-window-logo {
+  height: 2rem;
+  width: auto;
+  display: block;
+  object-fit: contain;
 }
 
 .instructions-window-list {
