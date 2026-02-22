@@ -135,8 +135,8 @@ export class App implements AfterViewInit {
     });
     this.map.addInteraction(this.drawInteraction);
     this.lastInfo = type === 'LineString'
-      ? 'Draw a line: click to add points, double-click to finish. Then press Finish to save.'
-      : 'Draw a polygon: click to add corners, click first point to close. Then press Finish to save.';
+      ? '📈 Draw a line: click to add points, double-click to finish. Then press Finish to save.'
+      : '📊 Draw a polygon: click to add corners, click first point to close. Then press Finish to save.';
     this.cdr.detectChanges();
   }
 
