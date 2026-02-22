@@ -8,6 +8,9 @@ import OSM from 'ol/source/OSM';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Draw from 'ol/interaction/Draw';
+import Stroke from 'ol/style/Stroke';
+import Fill from 'ol/style/Fill';
+import Style from 'ol/style/Style';
 import { fromLonLat } from 'ol/proj';
 import { getLength, getArea } from 'ol/sphere';
 import LineString from 'ol/geom/LineString';
@@ -33,14 +36,27 @@ export class App implements AfterViewInit {
   pendingSource = new VectorSource();
   drawInteraction: Draw | null = null;
   lastInfo: string = 'Loading…';
+  menuOpen = true;
+  menuView: 'main' | 'instructions' | 'help' = 'main';
+
+  setMenuView(view: 'main' | 'instructions' | 'help'): void {
+    this.menuView = view;
+    this.cdr.detectChanges();
+  }
+
+  /** Bold style so your drawings are clearly separate from map base/attribution */
+  private static readonly drawStyle = new Style({
+    stroke: new Stroke({ color: '#1565c0', width: 4 }),
+    fill: new Fill({ color: 'rgba(21, 101, 192, 0.15)' }),
+  });
 
   ngAfterViewInit(): void {
     this.map = new Map({
       target: 'map',
       layers: [
         new TileLayer({ source: new OSM() }),
-        new VectorLayer({ source: this.savedSource }),
-        new VectorLayer({ source: this.pendingSource }),
+        new VectorLayer({ source: this.savedSource, style: App.drawStyle }),
+        new VectorLayer({ source: this.pendingSource, style: App.drawStyle }),
       ],
       view: new View({
         center: fromLonLat([4.3517, 50.8503]),
@@ -50,7 +66,8 @@ export class App implements AfterViewInit {
     this.loadMeasurements();
   }
 
-  loadMeasurements(): void {
+  loadMeasurements(overrideMessage?: string): void {
+    this.savedSource.clear();
     this.http.get<Array<{ type: string; geojson: { geometry?: { type: string; coordinates: number[][] | number[][][] } } }>>(API + '/measurements').subscribe({
       next: (items) => {
         this.ngZone.run(() => {
@@ -65,7 +82,7 @@ export class App implements AfterViewInit {
               this.savedSource.addFeature(new Feature({ geometry: poly }));
             }
           });
-          this.lastInfo = items.length === 0 ? 'No measurements yet. Draw then click Finish to save.' : `${items.length} measurement(s) in database.`;
+          this.lastInfo = overrideMessage ?? (items.length === 0 ? 'No measurements yet. Draw then click Finish to save.' : `${items.length} measurement(s) in database.`);
           this.cdr.detectChanges();
         });
       },
@@ -180,28 +197,27 @@ export class App implements AfterViewInit {
   reset(): void {
     this.stopDrawing();
     this.pendingSource.clear();
-    // Force map to repaint so unsaved lines disappear immediately
+    this.savedSource.clear();
     if (this.map) {
       this.pendingSource.changed();
+      this.savedSource.changed();
       this.map.render();
     }
-    this.lastInfo = 'Unsaved drawings cleared. Your saved data in the database are unchanged.';
+    this.lastInfo = 'Map refreshed. All lines (saved and unsaved) cleared from the map.';
     this.cdr.detectChanges();
   }
 
-  clearDatabase(): void {
-    if (!confirm('Clear all measurements from the database? This cannot be undone.')) return;
-    this.http.delete<{ deletedCount: number }>(API + '/measurements').subscribe({
+  /** Delete only the last (most recent) saved measurement from the database. */
+  deleteLastMeasurement(): void {
+    if (!confirm('Delete the last saved measurement from the database?')) return;
+    this.http.delete<{ deletedCount: number }>(API + '/measurements/latest').subscribe({
       next: (res) => {
-        this.ngZone.run(() => {
-          this.savedSource.clear();
-          this.lastInfo = `Database cleared. ${res.deletedCount} measurement(s) removed.`;
-          this.cdr.detectChanges();
-        });
+        const msg = res.deletedCount === 1 ? 'Last measurement deleted.' : 'No measurement to delete.';
+        this.loadMeasurements(msg);
       },
-      error: () => {
+      error: (err) => {
         this.ngZone.run(() => {
-          this.lastInfo = 'Failed to clear database. Is the server running?';
+          this.lastInfo = err.status === 404 ? 'No measurement to delete.' : 'Failed to delete. Is the server running?';
           this.cdr.detectChanges();
         });
       },

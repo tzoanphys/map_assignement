@@ -1,15 +1,52 @@
 <div class="toolbar" (mousedown)="$event.stopPropagation()" (click)="$event.stopPropagation()">
+  <button type="button" class="btn-menu" (click)="menuOpen = !menuOpen" [attr.aria-label]="menuOpen ? 'Close menu' : 'Open menu'" [title]="menuOpen ? 'Close menu' : 'Open menu'">
+    <span class="menu-icon" aria-hidden="true">☰</span>
+  </button>
   <span class="toolbar-brand">Measure</span>
   <div class="toolbar-actions">
     <button type="button" (click)="setDrawMode('LineString')">Draw Line</button>
     <button type="button" (click)="setDrawMode('Polygon')">Draw Polygon</button>
     <button type="button" class="btn-finish" (click)="finishDrawing()">Finish</button>
     <button type="button" class="btn-reset" (click)="reset()">Reset</button>
-    <button type="button" class="btn-clear-db" (click)="clearDatabase()">Clear database</button>
+    <button type="button" class="btn-delete-data" (click)="deleteLastMeasurement()">Delete data</button>
     <button type="button" class="btn-download" (click)="downloadData()">Download</button>
+<section class="hint-panel" *ngIf="showInstructions">
+  <p class="hint">Draw on the map (double-click to finish a line; click first point to close a polygon). Only when you click <strong>Finish</strong> are data saved to the database; if you do not press Finish, nothing is saved. After saving, use <strong>Download</strong> to get your data as JSON. <strong>Reset</strong> refreshes the map and removes all lines (saved and unsaved) from the view. <strong>Delete data</strong> removes only the last saved measurement from the database.</p>
+</section>
   </div>
   <span class="info">{{ lastInfo ?? '—' }}</span>
 </div>
-<p class="hint">Draw on the map (double-click to finish a line; click first point to close a polygon). Only when you click <strong>Finish</strong> are data saved to the database; if you do not press Finish, nothing is saved. After saving, use <strong>Download</strong> to get your data as JSON. <strong>Reset</strong> clears unsaved drawings only. <strong>Clear database</strong> removes all saved measurements.</p>
 
-<div id="map" class="map"></div>
+<nav class="menu-nav" *ngIf="menuOpen">
+  <button type="button" class="menu-nav-item" [class.active]="menuView === 'main'" (click)="setMenuView('main')">Main</button>
+  <button type="button" class="menu-nav-item" [class.active]="menuView === 'instructions'" (click)="setMenuView('instructions')">Instructions</button>
+  <button type="button" class="menu-nav-item" [class.active]="menuView === 'help'" (click)="setMenuView('help')">Help</button>
+</nav>
+
+<main class="main-content">
+  <div id="map" class="map"></div>
+  <div class="attribution-bar">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. Your drawings appear in blue above the map.</div>
+
+  <section class="menu-panel overlay-panel" *ngIf="menuView === 'instructions'">
+    <h2 class="panel-title">Instructions</h2>
+    <p class="panel-text">How to run the app:</p>
+    <ol class="panel-list">
+      <li>Start <strong>MongoDB</strong> (e.g. run <code>mongod</code> or start the MongoDB service).</li>
+      <li>Start the <strong>backend</strong>: open a terminal, go to the server folder (<code>cd server</code>), then run <code>npm run dev</code>. The API will run on <code>http://localhost:3000</code>.</li>
+      <li>Start the <strong>frontend</strong>: open another terminal, go to the client folder (<code>cd client</code>), then run <code>ng serve</code> or <code>npx ng serve</code>. The app will be available at <code>http://localhost:4200</code>.</li>
+      <li>Open <code>http://localhost:4200</code> in your browser. Draw on the map, click <strong>Finish</strong> to save, or <strong>Reset</strong> to clear the map.</li>
+    </ol>
+    <button type="button" class="btn-back" (click)="setMenuView('main')">Back to Main</button>
+  </section>
+
+  <section class="menu-panel overlay-panel" *ngIf="menuView === 'help'">
+    <h2 class="panel-title">Help</h2>
+
+  <ng-container *ngIf="menuView === 'main'">
+    <div id="map" class="map"></div>
+    <div class="attribution-bar">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. Your drawings appear in blue above the map.</div>
+  </ng-container>
+    <p class="panel-text">Send a message.</p>
+    <button type="button" class="btn-back" (click)="setMenuView('main')">Back to Main</button>
+  </section>
+</main>

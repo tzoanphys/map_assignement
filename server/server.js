@@ -64,10 +64,14 @@ app.post("/api/measurements", async (req, res) => {
   res.status(201).json(saved);
 });
 
-// Delete all measurements (clear database)
-app.delete("/api/measurements", async (req, res) => {
-  const result = await Measurement.deleteMany({});
-  res.json({ deletedCount: result.deletedCount });
+// Delete only the most recently added measurement ("last" in DB)
+app.delete("/api/measurements/latest", async (req, res) => {
+  const latest = await Measurement.findOne().sort({ createdAt: -1 });
+  if (!latest) {
+    return res.status(404).json({ error: "No measurements to delete" });
+  }
+  await Measurement.findByIdAndDelete(latest._id);
+  res.json({ deletedCount: 1 });
 });
 
 // If no route matched, respond so curl doesn't hang
