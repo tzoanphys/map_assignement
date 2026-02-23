@@ -17,10 +17,8 @@ import LineString from 'ol/geom/LineString';
 import Polygon from 'ol/geom/Polygon';
 import Feature from 'ol/Feature';
 
-const API =
-  typeof window !== 'undefined' && window.location?.hostname === 'localhost'
-    ? 'http://localhost:3000/api'
-    : 'https://map-assignement.onrender.com/api';
+/** Use production API for all deployments (local, Netlify, Render) so Download and data load work everywhere. */
+const API = 'https://map-assignement.onrender.com/api';
 
 @Component({
   selector: 'app-root',
@@ -43,12 +41,12 @@ export class App implements AfterViewInit {
 
   /** Number of measurements currently saved (from API / after Finish). */
   savedMeasurementsCount = 0;
-  /** Number of measurements when user last downloaded; download only allowed when savedMeasurementsCount > this. */
+  /** Number of measurements when user last downloaded (used for success message). */
   countAtLastDownload = 0;
 
-  /** Download only when there are saved measurements and there is new data since last download. */
+  /** Download available whenever there are saved measurements (works on local, Netlify, Render). */
   get canDownload(): boolean {
-    return this.savedMeasurementsCount > 0 && this.savedMeasurementsCount > this.countAtLastDownload;
+    return this.savedMeasurementsCount > 0;
   }
 
   openInstructions(): void {
@@ -257,12 +255,10 @@ export class App implements AfterViewInit {
     });
   }
 
-  /** Download saved measurements as a JSON file. Only allowed when there are new measurements since last download. */
+  /** Download saved measurements as a JSON file. Available when there are saved measurements. */
   downloadData(): void {
     if (!this.canDownload) {
-      this.lastInfo = this.savedMeasurementsCount === 0
-        ? 'Draw and click Finish first to save measurements, then you can download.'
-        : 'No new measurements to download. Draw and click Finish to add more, then download.';
+      this.lastInfo = 'Draw and click Finish first to save measurements, then you can download.';
       this.cdr.detectChanges();
       return;
     }
@@ -278,7 +274,7 @@ export class App implements AfterViewInit {
         URL.revokeObjectURL(url);
         this.ngZone.run(() => {
           this.countAtLastDownload = items.length;
-          this.lastInfo = `Downloaded ${items.length} measurement(s). Add new measurements and Finish to download again.`;
+          this.lastInfo = `Downloaded ${items.length} measurement(s).`;
           this.cdr.detectChanges();
         });
       },
